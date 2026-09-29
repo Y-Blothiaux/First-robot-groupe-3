@@ -5,6 +5,18 @@ import time
 R = 0.025  # rayon de la roue = 2.5 cm
 L = 0.15  # distance entre les roues = 15 cm
 
+
+# Variables de position du robot dans le monde
+#  modifiées à chaque cycle de 20ms
+x_inUse = 0.0
+y_inUse = 0.0
+theta_inUse = 0.0
+
+# Config des vitesses 
+SpeedLinear = 2.0
+SpeedAngularLinear = 3.0
+SpeedAngular = 2.0
+
 def inverse_kinematics(x_dot, theta_dot):
 
     v_left_rad = (x_dot - (theta_dot * L / 2.0)) / R
@@ -40,9 +52,85 @@ def odom(x_dot, theta_dot, dt):
     return delta_x, delta_y, delta_theta   
 
 
-def go_to_xya(x,y,theta):
-    diff_dist_max= 0.05 #
-    diff_angle_max=0.03 
+def rotate_and_move(HorizontalOrientation):
+    ApproximateCenter = 3  # Si le point est entre -3 et 3 c'est dans la zone du centre
+    
+    FAST = 150  # Pour les écarts > 50 ou < -50
+    SLOW  = 40   # Pour proche du centre
+    
+    # HorizontalOrientation > 0
+    if HorizontalOrientation > ApproximateCenter:
+        if HorizontalOrientation > 50:
+            # On tourne vite à droite
+            s_left = FAST
+            s_right = -FAST
+        else:
+            #  On tourne doucement à droite
+            s_left = FAST
+            s_right = SLOW            
+    # HorizontalOrientation < 0
+    elif HorizontalOrientation < -ApproximateCenter:
+        if HorizontalOrientation < -50:
+            #  On tourne vite à gauche
+            s_left = -FAST
+            s_right = FAST
+        else:
+            # On tourne doucement à gauche
+            s_left = SLOW
+            s_right = FAST 
+    # tous droit
+    else:
+        s_left = FAST
+        s_right = FAST
+    # Envoi direct aux moteurs Dynamixel 
+    dxl_io.set_moving_speed({1: s_left, 2: -s_right})
+
+""" def go_to_xya(target_x, target_y, target_theta, dt):
+
+    global x_inUse, y_inUse, theta_inUse, objectif_atteint
+
+    diff_dist_max = 0.05  # 5 cm
+    diff_angle_max = 0.03 # ~1.7 degré
+    
+    # 1. Calcul de l'écart avec la cible
+    dx = target_x - x_inUse
+    dy = target_y - y_inUse
+    distance = math.sqrt(dx**2 + dy**2)
+    
+    #TODO faire une condition alternation si > a un angle par exemple 45%  du millieux on avance puis on tourne sinon on fais l'inverse
+    if distance > diff_dist_max:
+        # Phase d'avancement
+        angle_cible = math.atan2(dy, dx)
+        erreur_angle = normaliser_angle(angle_cible - theta_inUse)
+        
+        x_dot = SpeedLinear * distance * math.cos(erreur_angle)
+        theta_dot = SpeedAngularLinear * erreur_angle
+        objectif_atteint = False
+    else:
+        # Phase de rotation finale
+        erreur_orientation = normaliser_angle(target_theta - theta_inUse)
+        
+        if abs(erreur_orientation) < diff_angle_max:
+            # Cible atteinte !
+            x_dot = 0.0
+            theta_dot = 0.0
+            objectif_atteint = True
+        else:
+            x_dot = 0.0
+            theta_dot = SpeedAngular * erreur_orientation
+            objectif_atteint = False
+
+    # on transforme les données en vitesses réelle des roue pour reproduire le mouvement voulu
+    v_left_deg, v_right_deg = inverse_kinematics(x_dot, theta_dot)
+    
+    
+    # instruction aux moteurs
+    dxl_io.set_moving_speed({1: v_left_deg, 2: -v_right_deg})
+    
+    # Mise à jour de l'odométrie 
+    # en estimant la vitesse réelle du robot
+    x_dot_reel, theta_dot_reel = direct_kinematics(v_left_deg, v_right_deg)
+    x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot_reel, theta_dot_reel, dt) """
     
 direct= direct_kinematics(720,360)
 angl_roues= inverse_kinematics(direct[0],direct[1])
