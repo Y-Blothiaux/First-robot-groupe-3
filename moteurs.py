@@ -57,33 +57,33 @@ def rotate_and_move(HorizontalOrientation):
     
     FAST = 150  # Pour les écarts > 50 ou < -50
     SLOW  = 40   # Pour proche du centre
-    
+   
     # HorizontalOrientation > 0
     if HorizontalOrientation > ApproximateCenter:
         if HorizontalOrientation > 50:
             # On tourne vite à droite
-            s_left = FAST
-            s_right = -FAST
+            s_left = -FAST
+            s_right = FAST
         else:
             #  On tourne doucement à droite
-            s_left = FAST
-            s_right = SLOW            
+            s_left = SLOW
+            s_right = FAST            
     # HorizontalOrientation < 0
     elif HorizontalOrientation < -ApproximateCenter:
         if HorizontalOrientation < -50:
             #  On tourne vite à gauche
-            s_left = -FAST
-            s_right = FAST
+            s_left = FAST
+            s_right = -FAST
         else:
             # On tourne doucement à gauche
-            s_left = SLOW
-            s_right = FAST 
+            s_left = FAST
+            s_right = SLOW 
     # tous droit
     else:
         s_left = FAST
         s_right = FAST
     # Envoi direct aux moteurs Dynamixel 
-    dxl_io.set_moving_speed({1: -s_left, 2: s_right})
+    dxl_io.set_moving_speed({1: s_left, 2: s_right})
 
 """ def go_to_xya(target_x, target_y, target_theta, dt):
 
@@ -141,7 +141,7 @@ if not ports:
     exit('No port')
 
 dxl_io = pypot.dynamixel.DxlIO(ports[0])
-dxl_io.set_wheel_mode([2, 1])
+dxl_io.set_wheel_mode([1, 2])
 
 if __name__ == "__main__":
 

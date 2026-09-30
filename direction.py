@@ -33,7 +33,7 @@ def prediction(img):
         moment = cv2.moments(largestContour)
 
         # moment["m00"] represente la surface, le nombre de pixel de ce contour
-        if (moment["m00"] != 0):
+        if (moment["m00"] > 300):
 
             # On calcul la position du centre du contour (sur l'axe X) 
             cx = int(moment["m10"]/moment["m00"])
@@ -56,7 +56,7 @@ def prediction(img):
             return direction
 
     # Si aucune ligne n'est trouvé, on va tout droit
-    cv2.imshow("prediciton debug", img)
+    #cv2.imshow("prediciton debug", img)
     return 0
 
 

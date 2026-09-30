@@ -7,5 +7,6 @@ if not ports:
 
 dxl_io = pypot.dynamixel.DxlIO(ports[0])
 dxl_io.set_wheel_mode([1, 2])
-
+dxl_io.set_moving_speed({1:360, 2: 360})
+time.sleep(1)
 dxl_io.set_moving_speed({1: 0, 2: 0}) # Degrees / s
