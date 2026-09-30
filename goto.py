@@ -37,7 +37,7 @@ def direct_kinematics(v_left, v_right):
     theta_dot = R * (v_right_rad - v_left_rad) / L
     return x_dot, theta_dot
 
-def odom(x_dot, theta_dot, dt):
+def odom2D(x_dot, theta_dot, dt):
      delta_theta = theta_dot * dt
      if abs(theta_dot) > 1e-3:
         ray_traj = x_dot / theta_dot 
@@ -49,7 +49,7 @@ def odom(x_dot, theta_dot, dt):
      return delta_x, delta_y, delta_theta   
 
 def tick_odom(x, y, theta, x_dot, theta_dot, dt):
-    i,j,k= odom(x_dot,theta_dot,dt)
+    i,j,k= odom2D(x_dot,theta_dot,dt)
     #changement de repère
     new_x = x + (i * math.cos(theta) - j * math.sin(theta))
     new_y = y + (i * math.sin(theta) + j * math.cos(theta))
