@@ -8,7 +8,7 @@ L = 0.15  # distance entre les roues = 15 cm
 
 
 # Variables de position du robot dans le monde
-#  modifiées à chaque cycle de 20ms
+# Modifiées à chaque cycle de 20ms
 x_inUse = 0.0
 y_inUse = 0.0
 theta_inUse = 0.0
@@ -50,7 +50,7 @@ def odom2D(x_dot, theta_dot, dt):
 
 def tick_odom(x, y, theta, x_dot, theta_dot, dt):
     i,j,k= odom2D(x_dot,theta_dot,dt)
-    #changement de repère
+    # Changement de repère
     new_x = x + (i * math.cos(theta) - j * math.sin(theta))
     new_y = y + (i * math.sin(theta) + j * math.cos(theta))
     new_theta = normaliser_angle(theta + k)
@@ -75,7 +75,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         v_right_inUse = -speeds[1]
         x_dot_inUse,theta_dot_inUse=direct_kinematics(v_left_inUse,v_right_inUse)
         x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot_inUse, theta_dot_inUse, dt)
-        #distance restante avec pythagore
+        # Distance restante avec pythagore
         dx = target_x - x_inUse
         dy = target_y - y_inUse
         distance_restante = math.sqrt(dx**2 + dy**2)
@@ -86,7 +86,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
             erreur_cap = normaliser_angle(angle_vers_point - theta_inUse)
             
             if abs(erreur_cap) > tolerance_cap_marche:
-                # alignement avec la cible
+                # Alignement avec la cible
                 x_dot_target = 0.0
                 if erreur_cap > 0:
                     theta_dot_target = vitesse_rotation 
@@ -97,7 +97,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
                 theta_dot_target = 0.0
                 
         else:
-           # on pivote vers l'angle final
+           # On pivote vers l'angle final
             error_angle_final = normaliser_angle(target_theta - theta_inUse)
             
             if abs(error_angle_final) > target_diff_angle_max:
@@ -114,12 +114,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         v_left_deg, v_right_deg = inverse_kinematics(x_dot_target, theta_dot_target)
         dxl_io.set_moving_speed({1: v_left_deg, 2: -v_right_deg})
         
-        time.sleep(dt)
-
-
-
-        
-        
+        time.sleep(dt)       
         
 direct= direct_kinematics(720,360)
 angl_roues= inverse_kinematics(direct[0],direct[1])

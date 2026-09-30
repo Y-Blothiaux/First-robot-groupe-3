@@ -2,17 +2,16 @@ import math
 import pypot.dynamixel
 import time
 
-R = 0.025  # rayon de la roue = 2.5 cm
-L = 0.15  # distance entre les roues = 15 cm
-
+R = 0.025  # Rayon de la roue = 2.5 cm
+L = 0.15  # Distance entre les roues = 15 cm
 
 # Variables de position du robot dans le monde
-#  modifiées à chaque cycle de 20ms
+# Modifiées à chaque cycle de 20ms
 x_inUse = 0.0
 y_inUse = 0.0
 theta_inUse = 0.0
 
-# Config des vitesses 
+# Config des vitesses
 SpeedLinear = 2.0
 SpeedAngularLinear = 3.0
 SpeedAngular = 2.0
@@ -62,7 +61,7 @@ def rotate_and_move(HorizontalOrientation):
     
     coef = 2.2
 
-    # Modele vitesse de base + differenciel
+    # Modèle vitesse de base + differenciel
     s_left = baseSpeed - (HorizontalOrientation * coef)
     s_right = baseSpeed + (HorizontalOrientation * coef)
 
@@ -132,6 +131,6 @@ dxl_io.set_wheel_mode([1, 2])
 
 if __name__ == "__main__":
 
-    dxl_io.set_moving_speed({1: -angl_roues[0], 2: angl_roues[1]}) # Degrees / s
+    dxl_io.set_moving_speed({1: -angl_roues[0], 2: angl_roues[1]}) # Degrés/s
     time.sleep(2)
-    dxl_io.set_moving_speed({1: 0, 2: 0}) # Degrees / s
+    dxl_io.set_moving_speed({1: 0, 2: 0}) # Degrés/s

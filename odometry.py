@@ -17,13 +17,13 @@ def odometry(dt):
 
     try:
         while True:
-            #on lis la vitesse des roues poussées
+            # On lit la vitesse des roues poussées
             speeds = dxl_io.get_present_speed([1, 2])
             v_left_inUse = speeds[0]
             v_right_inUse = -speeds[1]
             x_dot, theta_dot = direct_kinematics(v_left_inUse, v_right_inUse)
             x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot, theta_dot, dt)
-            #on affiche la position           
+            # On affiche la position           
             angle_deg = math.degrees(theta_inUse)
             print(f"Position -> X: {x_inUse*100:.1f} cm | Y: {y_inUse*100:.1f} cm | Cap: {angle_deg:.1f}°")
             time.sleep(dt)
