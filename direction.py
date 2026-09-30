@@ -8,34 +8,23 @@ def prediction(img):
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-# BLEU
-lower_blue = np.array([100, 70, 70])
-upper_blue = np.array([140, 255, 255])
+    # BLEU
+    lower_blue = np.array([100, 70, 70])
+    upper_blue = np.array([140, 255, 255])
 
-# VERT
-lower_green = np.array([40, 70, 70])
-upper_green = np.array([90, 255, 255])
+    # VERT
+    lower_green = np.array([40, 70, 70])
+    upper_green = np.array([90, 255, 255])
 
-# JAUNE
-lower_yellow = np.array([20, 70, 70])
-upper_yellow = np.array([35, 255, 255])
+    # JAUNE
+    lower_yellow = np.array([20, 70, 70])
+    upper_yellow = np.array([35, 255, 255])
 
-# ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
-lower_red1 = np.array([0, 70, 70])
-upper_red1 = np.array([10, 255, 255])
-
-lower_red2 = np.array([170, 70, 70])
-upper_red2 = np.array([179, 255, 255])
-
-# Define range for blue color in HSV
-lower_blue = np.array([100, 120, 100])
-upper_blue = np.array([140, 255, 255])
-
-def prediction(img):
-    # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
-    hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-    decalage=10
+    # ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
+    lower_red1 = np.array([0, 70, 70])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([170, 70, 70])
+    upper_red2 = np.array([179, 255, 255])
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
     # les pixels de la range de couleur cherché (et les autres en noir)
