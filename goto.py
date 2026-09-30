@@ -16,7 +16,7 @@ theta_inUse = 0.0
 x_dot_inUse = 0.0
 y__dot_inUse = 0.0
 theta_dot_inUse = 0.0
-dt_inUse= 0.2
+dt_inUse= 0.02
 # Config des vitesses 
 speedLinear = 2.0
 speedAngularLinear = 3.0
@@ -62,6 +62,7 @@ def normaliser_angle(angle):
 
 
 def go_to_xya(target_x,target_y,target_theta,dt):
+    global x_inUse,y_inUse,theta_inUse
     target_diff_dist_max = 0.05  # 5 cm
     target_diff_angle_max = 0.03
     tolerance_cap_marche = 0.1   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
