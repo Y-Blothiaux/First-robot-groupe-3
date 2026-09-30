@@ -4,31 +4,69 @@ import cv2
 
 from moteurs import rotate_and_move, stop
 
+
+# BLEU
+lower_blue = np.array([100, 70, 70])
+upper_blue = np.array([140, 255, 255])
+
+# VERT
+lower_green = np.array([40, 40, 30])
+upper_green = np.array([90, 255, 255])
+
+# JAUNE
+lower_yellow = np.array([20, 70, 70])
+upper_yellow = np.array([35, 255, 255])
+
+# ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
+lower_red1 = np.array([0, 70, 70])
+upper_red1 = np.array([10, 255, 255])
+lower_red2 = np.array([170, 70, 70])
+upper_red2 = np.array([179, 255, 255])
+
+numeroCouleur = 0
+attente = 0
+
+lower = lower_yellow
+upper = upper_yellow
+
 def prediction(img):
+    global numeroCouleur, lower, upper, attente
+
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    # BLEU
-    lower_blue = np.array([100, 70, 70])
-    upper_blue = np.array([140, 255, 255])
+    attente-=1
 
-    # VERT
-    lower_green = np.array([40, 70, 70])
-    upper_green = np.array([90, 255, 255])
+    # Recherche de zone verte
+    mask = cv2.inRange(hsv_img, lower_green, upper_green)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # JAUNE
-    lower_yellow = np.array([20, 70, 70])
-    upper_yellow = np.array([35, 255, 255])
+    if contours and attente<=0:
+        largestContour = max(contours, key=cv2.contourArea)
+        moment = cv2.moments(largestContour)
+        if (moment["m00"] > 300):
+            attente=180
+            numeroCouleur=(numeroCouleur+1)%3
+            match numeroCouleur:
+                case 0:
+                    lower = lower_yellow
+                    upper = upper_yellow
+                    print("yellow")
+                case 1:
+                    lower = lower_blue
+                    upper = upper_blue
+                    print("bleue")
+                case 2:
+                    lower = lower_red1
+                    upper = upper_red1
+                    print("rouge")
+            print(lower)
 
-    # ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
-    lower_red1 = np.array([0, 70, 70])
-    upper_red1 = np.array([10, 255, 255])
-    lower_red2 = np.array([170, 70, 70])
-    upper_red2 = np.array([179, 255, 255])
+    # Recherche de ligne coloré
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
     # les pixels de la range de couleur cherché (et les autres en noir)
-    mask = cv2.inRange(hsv_img, lower_red1, upper_red1)
+    mask = cv2.inRange(hsv_img, lower, upper)
 
     # cv2.imshow("prediciton masque debug", mask)
 

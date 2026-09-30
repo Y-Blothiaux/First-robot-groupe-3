@@ -57,15 +57,15 @@ def stop():
 
 def rotate_and_move(HorizontalOrientation):
     # Vitesse constante pour avancer
-    baseSpeed = int(150 - (abs(HorizontalOrientation) * 0.5))
+    baseSpeed = int(400 - (abs(HorizontalOrientation) * 0.5))
     
-    coef = 2.2
+    coef = 2.8
 
     # Modèle vitesse de base + differenciel
     s_left = baseSpeed - (HorizontalOrientation * coef)
     s_right = baseSpeed + (HorizontalOrientation * coef)
 
-    maxSpeed = 250
+    maxSpeed = 700
     s_left = max(-maxSpeed, min(maxSpeed, s_left))
     s_right = max(-maxSpeed, min(maxSpeed, s_right))
 
