@@ -140,7 +140,7 @@ if __name__ == "__main__":
     dxl_io.set_wheel_mode([1, 2])
     
     # S'assurer que le robot est à l'arrêt avant de commencer
-    dxl_io.set_moving_speed({1: 0, 2: 0})
+    dxl_io.set_moving_speed({1: 0, 2: 0})  
     time.sleep(1)
 
     # x = 0.5m, y = 0.0m, angle final = 0°
