@@ -1,7 +1,7 @@
 import math
 import pypot.dynamixel
 import time
-import goto
+from goto import direct_kinematics
 
 dxl_io = pypot.dynamixel.DxlIO(ports[0])
 dxl_io.set_wheel_mode([1, 2])
