@@ -8,8 +8,6 @@ def prediction(img):
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    decalage=10
-
     # BLEU
     lower_blue = np.array([100, 70, 70])
     upper_blue = np.array([140, 255, 255])
@@ -36,7 +34,7 @@ def prediction(img):
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
     # les pixels de la range de couleur cherché (et les autres en noir)
-    mask = cv2.inRange(hsv_img, lower_yellow, upper_yellow)
+    mask = cv2.inRange(hsv_img, lower_red1, upper_red1)
 
     # cv2.imshow("prediciton masque debug", mask)
 
@@ -61,7 +59,7 @@ def prediction(img):
             cx = int(moment["m10"]/moment["m00"])
             
             # On recupere le centre de l'image sur l'axe X
-            centreImage = img.shape[1]/2
+            centreImage = (img.shape[1]/2)
             
             # On calcul l'ecart du centre du contour par rapport au centre
             erreur = cx - centreImage
@@ -75,11 +73,11 @@ def prediction(img):
             #cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
             #cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
 
-            return direction+decalage
+            return direction
 
     # Si aucune ligne n'est trouvé, on va tout droit
     #cv2.imshow("prediciton debug", img)
-    return decalage
+    return 0
 
 
 if __name__ == "__main__":
@@ -102,10 +100,10 @@ if __name__ == "__main__":
         # cv2.imshow('Main debug', extraction(frame))
 
         # On force une resolution plus legere pour le traitement
-        frame = cv2.resize(frame, (320, 240))
+        frame = cv2.resize(frame, (360, 240))
 
         # On coupe pour garder le bas de la frame
-        frame = frame[160:240, :]
+        frame = frame[100:360, :]
 
         # On recupere une predication de la direction a prendre
         direction = prediction(frame)
