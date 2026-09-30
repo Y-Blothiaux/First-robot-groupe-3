@@ -8,13 +8,35 @@ def prediction(img):
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+    decalage=10
+
+    # BLEU
+    lower_blue = np.array([100, 70, 70])
+    upper_blue = np.array([140, 255, 255])
+
+    # VERT
+    lower_green = np.array([40, 70, 70])
+    upper_green = np.array([90, 255, 255])
+
+    # JAUNE
+    lower_yellow = np.array([20, 70, 70])
+    upper_yellow = np.array([35, 255, 255])
+
+    # ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
+    lower_red1 = np.array([0, 70, 70])
+    upper_red1 = np.array([10, 255, 255])
+
+    lower_red2 = np.array([170, 70, 70])
+    upper_red2 = np.array([179, 255, 255])
+ 	
+   
     # Define range for blue color in HSV
     lower_blue = np.array([100, 120, 100])
     upper_blue = np.array([140, 255, 255])
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
     # les pixels de la range de couleur cherché (et les autres en noir)
-    mask = cv2.inRange(hsv_img, lower_blue, upper_blue)
+    mask = cv2.inRange(hsv_img, lower_yellow, upper_yellow)
 
     # cv2.imshow("prediciton masque debug", mask)
 
@@ -53,11 +75,11 @@ def prediction(img):
             #cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
             #cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
 
-            return direction
+            return direction+decalage
 
     # Si aucune ligne n'est trouvé, on va tout droit
     #cv2.imshow("prediciton debug", img)
-    return 0
+    return decalage
 
 
 if __name__ == "__main__":
@@ -80,10 +102,10 @@ if __name__ == "__main__":
         # cv2.imshow('Main debug', extraction(frame))
 
         # On force une resolution plus legere pour le traitement
-        frame = cv2.resize(frame, (160, 120))
+        frame = cv2.resize(frame, (320, 240))
 
         # On coupe pour garder le bas de la frame
-        frame = frame[60:120, :]
+        frame = frame[160:240, :]
 
         # On recupere une predication de la direction a prendre
         direction = prediction(frame)

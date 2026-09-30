@@ -56,13 +56,21 @@ def stop():
 
 
 
-def rotate_and_move(horizontalOrientation):
-    maxSpeed = 200
+def rotate_and_move(HorizontalOrientation):
+    # Vitesse constante pour avancer
+    baseSpeed = 150
+    
+    coef = 2.4
 
-    s_left = min(maxSpeed, maxSpeed * ((100-horizontalOrientation)/100))
-    s_right = min(maxSpeed, maxSpeed * ((100+horizontalOrientation)/100))
+    # Modele vitesse de base + differenciel
+    s_left = baseSpeed - (HorizontalOrientation * coef)
+    s_right = baseSpeed + (HorizontalOrientation * coef)
 
-    dxl_io.set_moving_speed({1: -s_left, 2: s_right})
+    maxSpeed = 250
+    s_left = max(-maxSpeed, min(maxSpeed, s_left))
+    s_right = max(-maxSpeed, min(maxSpeed, s_right))
+
+    dxl_io.set_moving_speed({1: s_left, 2: -s_right})
 
 """ def go_to_xya(target_x, target_y, target_theta, dt):
 
