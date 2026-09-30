@@ -51,39 +51,18 @@ def odom(x_dot, theta_dot, dt):
 
     return delta_x, delta_y, delta_theta   
 
+def stop():
+    dxl_io.set_moving_speed({1: 0, 2: 0})
 
-def rotate_and_move(HorizontalOrientation):
-    ApproximateCenter = 3  # Si le point est entre -3 et 3 c'est dans la zone du centre
-    
-    FAST = 150  # Pour les écarts > 50 ou < -50
-    SLOW  = 40   # Pour proche du centre
-   
-    # HorizontalOrientation > 0
-    if HorizontalOrientation > ApproximateCenter:
-        if HorizontalOrientation > 50:
-            # On tourne vite à droite
-            s_left = -FAST
-            s_right = FAST
-        else:
-            #  On tourne doucement à droite
-            s_left = SLOW
-            s_right = FAST            
-    # HorizontalOrientation < 0
-    elif HorizontalOrientation < -ApproximateCenter:
-        if HorizontalOrientation < -50:
-            #  On tourne vite à gauche
-            s_left = FAST
-            s_right = -FAST
-        else:
-            # On tourne doucement à gauche
-            s_left = FAST
-            s_right = SLOW 
-    # tous droit
-    else:
-        s_left = FAST
-        s_right = FAST
-    # Envoi direct aux moteurs Dynamixel 
-    dxl_io.set_moving_speed({1: s_left, 2: s_right})
+
+
+def rotate_and_move(horizontalOrientation):
+    maxSpeed = 200
+
+    s_left = min(maxSpeed, maxSpeed * ((100-horizontalOrientation)/100))
+    s_right = min(maxSpeed, maxSpeed * ((100+horizontalOrientation)/100))
+
+    dxl_io.set_moving_speed({1: -s_left, 2: s_right})
 
 """ def go_to_xya(target_x, target_y, target_theta, dt):
 

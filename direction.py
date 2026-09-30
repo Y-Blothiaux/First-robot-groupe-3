@@ -2,14 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-from moteurs import rotate_and_move
+from moteurs import rotate_and_move, stop
 
 def prediction(img):
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Define range for blue color in HSV
-    lower_blue = np.array([100, 70, 80])
+    lower_blue = np.array([100, 120, 100])
     upper_blue = np.array([140, 255, 255])
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
@@ -60,10 +60,6 @@ def prediction(img):
     return 0
 
 
-
-
-
-
 if __name__ == "__main__":
 
     # On choisit la camera (1 si pc portable, 0 sinon)
@@ -96,6 +92,7 @@ if __name__ == "__main__":
 
         # Appuyer sur q pour quitter la boucle (a virer)
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            stop()
             break
 
 
