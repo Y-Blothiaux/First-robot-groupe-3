@@ -83,7 +83,7 @@ def rotate_and_move(HorizontalOrientation):
         s_left = FAST
         s_right = FAST
     # Envoi direct aux moteurs Dynamixel 
-    dxl_io.set_moving_speed({1: s_left, 2: -s_right})
+    dxl_io.set_moving_speed({1: -s_left, 2: s_right})
 
 """ def go_to_xya(target_x, target_y, target_theta, dt):
 
@@ -132,6 +132,7 @@ def rotate_and_move(HorizontalOrientation):
     x_dot_reel, theta_dot_reel = direct_kinematics(v_left_deg, v_right_deg)
     x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot_reel, theta_dot_reel, dt) """
     
+
 direct= direct_kinematics(720,360)
 angl_roues= inverse_kinematics(direct[0],direct[1])
 
@@ -140,7 +141,10 @@ if not ports:
     exit('No port')
 
 dxl_io = pypot.dynamixel.DxlIO(ports[0])
-dxl_io.set_wheel_mode([1, 2])
-dxl_io.set_moving_speed({1: angl_roues[0], 2: -angl_roues[1]}) # Degrees / s
-time.sleep(2)
-dxl_io.set_moving_speed({1: 0, 2: 0}) # Degrees / s
+dxl_io.set_wheel_mode([2, 1])
+
+if __name__ == "__main__":
+
+    dxl_io.set_moving_speed({1: -angl_roues[0], 2: angl_roues[1]}) # Degrees / s
+    time.sleep(2)
+    dxl_io.set_moving_speed({1: 0, 2: 0}) # Degrees / s

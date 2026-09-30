@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
+from moteurs import rotate_and_move
+
 def prediction(img):
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -48,8 +50,8 @@ def prediction(img):
             # On force la direction dans cet echelle
             direction = max(-100,min(100,direction))
 
-            cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
-            cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
+            #cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
+            #cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
 
             return direction
 
@@ -62,39 +64,41 @@ def prediction(img):
 
 
 
-#main script
+if __name__ == "__main__":
 
-# On choisit la camera (1 si pc portable, 0 sinon)
-cap = cv2.VideoCapture(1)
-if not cap.isOpened():
-    print("Error: Could not open webcam.")
-    exit()
+    # On choisit la camera (1 si pc portable, 0 sinon)
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Error: Could not open webcam.")
+        exit()
 
-# Boucle infini de capture de la camera
-while True:
+    # Boucle infini de capture de la camera
+    while True:
 
-    # On recupere une frame de la camera
-    ret, frame = cap.read()
-    if not ret:
-        print("Error: Can't receive frame.")
-        break
+        # On recupere une frame de la camera
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Can't receive frame.")
+            break
 
-    # cv2.imshow('Main debug', extraction(frame))
+        # cv2.imshow('Main debug', extraction(frame))
 
-    # On force une resolution plus legere pour le traitement
-    frame = cv2.resize(frame, (160, 120))
+        # On force une resolution plus legere pour le traitement
+        frame = cv2.resize(frame, (160, 120))
 
-    # On coupe pour garder le bas de la frame
-    frame = frame[60:120, :]
+        # On coupe pour garder le bas de la frame
+        frame = frame[60:120, :]
 
-    # On recupere une predication de la direction a prendre
-    prediction(frame)
+        # On recupere une predication de la direction a prendre
+        direction = prediction(frame)
 
-    # Appuyer sur q pour quitter la boucle (a virer)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        rotate_and_move(direction)
+
+        # Appuyer sur q pour quitter la boucle (a virer)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 
-# Release the capture and close windows
-cap.release()
-cv2.destroyAllWindows()
+    # Release the capture and close windows
+    cap.release()
+    cv2.destroyAllWindows()
