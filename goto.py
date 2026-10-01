@@ -4,7 +4,7 @@ import time
 
 
 R = 0.025  # rayon de la roue = 2.5 cm
-L = 0.15  # distance entre les roues = 15 cm
+L = 0.146  # distance entre les roues = 14.6 cm
 
 
 # Variables de position du robot dans le monde
@@ -14,13 +14,8 @@ y_inUse = 0.0
 theta_inUse = 0.0
 
 x_dot_inUse = 0.0
-y__dot_inUse = 0.0
 theta_dot_inUse = 0.0
 dt_inUse= 0.02
-# Config des vitesses 
-speedLinear = 2.0
-speedAngularLinear = 3.0
-speedAngular = 2.0
 
 #initialisation
 ports = pypot.dynamixel.get_available_ports()
@@ -38,7 +33,6 @@ def inverse_kinematics(x_dot, theta_dot):
     v_left_rad = (x_dot - (theta_dot * L / 2.0)) / R
     v_right_rad = (x_dot + (theta_dot * L / 2.0)) / R
     # Les moteurs Dynamixel attendent des consignes en degrés/seconde,
-    # d'où la conversion finale depuis les radians.
     v_left_deg = math.degrees(v_left_rad)
     v_right_deg = math.degrees(v_right_rad)
     return v_left_deg, v_right_deg
@@ -51,7 +45,7 @@ def direct_kinematics(v_left, v_right):
     return x_dot, theta_dot
 
 def odom2D(x_dot, theta_dot, dt):
-     # Calcule le déplacement "local" du robot pendant le court intervalle dt.
+     # Calcule le déplacement "local" du robot 
      delta_theta = theta_dot * dt
      # Si la vitesse angulaire est significative, le robot ne va pas tout droit : 
      # il décrit un arc de cercle.
@@ -86,12 +80,12 @@ def normalise_angle(angle):
 
 def go_to_xya(target_x,target_y,target_theta,dt):
     global x_inUse,y_inUse,theta_inUse
-    target_diff_dist_max = 0.05  # 5 cm
+    target_diff_dist_max = 0.03  # 3 cm
     target_diff_angle_max = 0.03
-    tolerated_cap_steps = 0.1   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
+    tolerated_cap_steps = 0.05   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
 
     vitesse_marche = 0.15
-    speed_rotation = 1.0
+    speed_rotation = 3.0
     while True:
         # On lit la vitesse réelle des moteurs (boucle fermée).
         # L'inversion de signe sur la roue droite (-speeds[1]) est nécessaire car 
@@ -116,15 +110,17 @@ def go_to_xya(target_x,target_y,target_theta,dt):
             # Logique de navigation (Machine à états) : 
             # On priorise la rotation. Si le robot n'est pas bien aligné
             # avec la cible (erreur > tolérance), il pivote sur place.
-            if abs(error_cap) > tolerated_cap_steps:
+            tolerance_actuelle = tolerated_cap_steps
+            if distance_togo < 0.15:
+                tolerance_actuelle=0.25
+            vitesse_avance = max(0.05,min(vitesse_marche,2*distance_togo))
+            if abs(error_cap) > tolerance_actuelle:
                 # Alignement avec la cible
                 x_dot_target = 0.0
-                if error_cap > 0:
-                    theta_dot_target = speed_rotation 
-                else: theta_dot_target = -speed_rotation
+                theta_dot_target = max(-speed_rotation,min(speed_rotation, 2* error_cap))
             else:
                 # S'il est bien aligné, alors et seulement alors, il avance en ligne droite.
-                x_dot_target = vitesse_marche
+                x_dot_target = vitesse_avance
                 theta_dot_target = 0.0
                 
         else:
@@ -135,9 +131,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
             if abs(error_angle_final) > target_diff_angle_max:
                 # On tourne sur place pour corriger l'angle final
                 x_dot_target = 0.0
-                if error_angle_final > 0:
-                      theta_dot_target = speed_rotation  
-                else: theta_dot_target = -speed_rotation 
+                theta_dot_target = max(-speed_rotation, min(speed_rotation, 2 * error_angle_final)) 
             else:
                 dxl_io.set_moving_speed({1: 0, 2: 0})
                 break
@@ -147,12 +141,6 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         dxl_io.set_moving_speed({1: v_left_deg, 2: -v_right_deg})
         
         time.sleep(dt)       
-
-
-
-        
-direct= direct_kinematics(720,360)
-angl_roues= inverse_kinematics(direct[0],direct[1])
 
 #tests
 
@@ -176,8 +164,9 @@ if __name__ == "__main__":
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
     go_to_xya(0.5, 0.5, math.radians(90), dt_inUse)
 
-    # x = 0.0m, y = 0.0m, angle final = 180°
-    go_to_xya(0.0, 0.0, math.radians(180), dt_inUse)
+    time.sleep(2)
+    # retour au départ
+    go_to_xya(0.0, 0.0, math.radians(-135), dt_inUse)
 
     # Arrêt de sécurité
     dxl_io.set_moving_speed({1: 0, 2: 0})
