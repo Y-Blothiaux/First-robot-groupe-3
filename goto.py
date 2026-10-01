@@ -78,10 +78,13 @@ def go_to_xya(target_x,target_y,target_theta,dt):
     vitesse_marche = 0.15
     vitesse_rotation = 1.0
     while True:
+        #on cherche la vitesse
         speeds = dxl_io.get_present_speed([1, 2])
         v_left_inUse = speeds[0]
         v_right_inUse = -speeds[1]
+        
         x_dot_inUse,theta_dot_inUse=direct_kinematics(v_left_inUse,v_right_inUse)
+        #on actualise la position
         x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot_inUse, theta_dot_inUse, dt)
         # Distance restante avec pythagore
         dx = target_x - x_inUse
@@ -89,7 +92,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         distance_restante = math.sqrt(dx**2 + dy**2)
 
         if distance_restante > target_diff_dist_max:
-            #
+            
             angle_vers_point = math.atan2(dy, dx)
             erreur_cap = normaliser_angle(angle_vers_point - theta_inUse)
             
@@ -126,13 +129,6 @@ def go_to_xya(target_x,target_y,target_theta,dt):
 
 
 
-
-
-
-
-
-
-
         
 direct= direct_kinematics(720,360)
 angl_roues= inverse_kinematics(direct[0],direct[1])
@@ -152,12 +148,12 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # x = 0.5m, y = 0.0m, angle final = 0°
-    go_to_xya(0.5, 0.0, 0.0, dt_inUse)
+    go_to_xya(0.2, 0.0, 0.0, dt_inUse)
     
     time.sleep(2) # Pause de 2 secondes
     
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
-    go_to_xya(0.5, 0.5, math.radians(90), dt_inUse)
+    go_to_xya(0.2, 0., math.radians(90), dt_inUse)
 
     # x = 0.0m, y = 0.0m, angle final = 180°
     go_to_xya(0.0, 0.0, math.radians(180), dt_inUse)
