@@ -22,11 +22,11 @@ def odometry(period=0.02):
             v_left = speeds[0]
             v_right = -speeds[1]
             x_dot, theta_dot = direct_kinematics(v_left, v_right)
-            x, y, theta = tick_odom(x, y, theta, x_dot, theta_dot, dt)
-            print(f"\rX: {y*100:7.1f} cm | Y: {x*100:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
+            y, x, theta = tick_odom(y, x, theta, x_dot, theta_dot, dt)
+            print(f"\rX: {x*100:7.1f} cm | Y: {y*100:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
             time.sleep(period)
     except KeyboardInterrupt:
-            print(f"\nPosition finale -> X: {y*100:.1f} cm | Y: {x*100:.1f} cm | Cap: {math.degrees(theta):.1f}°")
+            print(f"\nPosition finale -> X: {x*100:.1f} cm | Y: {y*100:.1f} cm | Cap: {math.degrees(theta):.1f}°")
             print("\nArrêt du suivi odométrique.")
 
 if __name__ == "__main__":
