@@ -234,8 +234,8 @@ if __name__ == "__main__":
 
         # Exemple : triangle rectangle
         go_to_xya(0.50, 0.00, math.radians(0))
-        go_to_xya(0.50, 0.50, math.radians(90))
-        go_to_xya(0.00, 0.00, math.radians(-135))
+        go_to_xya(0.50, 0.00, math.radians(180))
+        go_to_xya(0.00, 0.00, math.radians(0))
 
     finally:
         dxl_io.set_moving_speed({1: 0, 2: 0})

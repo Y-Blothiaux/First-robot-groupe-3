@@ -85,7 +85,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
     tolerated_cap_steps = 0.05   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
 
     vitesse_marche = 0.15
-    speed_rotation = 3.0
+    speed_rotation = 4.0
     last_time = time.time()
     while True:
         current_time = time.time()
