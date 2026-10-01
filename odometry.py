@@ -31,7 +31,6 @@ def odometry(period=0.02):
 
 if __name__ == "__main__":
     odometry()
-<<<<<<< HEAD
 
 
 
