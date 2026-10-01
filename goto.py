@@ -142,12 +142,6 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         
         time.sleep(dt)       
 
-
-
-        
-direct= direct_kinematics(720,360)
-angl_roues= inverse_kinematics(direct[0],direct[1])
-
 #tests
 
 if __name__ == "__main__":
