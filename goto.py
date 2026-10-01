@@ -22,6 +22,14 @@ speedLinear = 2.0
 speedAngularLinear = 3.0
 speedAngular = 2.0
 
+#initialisation
+ports = pypot.dynamixel.get_available_ports()
+if not ports:
+    exit('No port')
+
+dxl_io = pypot.dynamixel.DxlIO(ports[0])
+dxl_io.set_wheel_mode([1, 2])
+
 
 def inverse_kinematics(x_dot, theta_dot):
     v_left_rad = (x_dot - (theta_dot * L / 2.0)) / R
@@ -115,16 +123,21 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         dxl_io.set_moving_speed({1: v_left_deg, 2: -v_right_deg})
         
         time.sleep(dt)       
+
+
+
+
+
+
+
+
+
+
         
 direct= direct_kinematics(720,360)
 angl_roues= inverse_kinematics(direct[0],direct[1])
 
-ports = pypot.dynamixel.get_available_ports()
-if not ports:
-    exit('No port')
-
-dxl_io = pypot.dynamixel.DxlIO(ports[0])
-dxl_io.set_wheel_mode([1, 2])
+#tests
 
 if __name__ == "__main__":
     ports = pypot.dynamixel.get_available_ports()
