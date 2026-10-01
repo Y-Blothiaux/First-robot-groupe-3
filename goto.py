@@ -3,8 +3,8 @@ import pypot.dynamixel
 import time
 
 
-R = 0.025  # rayon de la roue = 2.5 cm
-L = 0.144  # distance entre les roues = 14.8 cm
+R = 0.02475  # rayon de la roue = 2.5 cm
+L = 0.146  # distance entre les roues = 14.8 cm
 
 
 # Variables de position du robot dans le monde
@@ -85,7 +85,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
     tolerated_cap_steps = 0.05   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
 
     vitesse_marche = 0.15
-    speed_rotation = 4.0
+    speed_rotation = 1.0
     last_time = time.time()
     while True:
         current_time = time.time()
@@ -161,17 +161,16 @@ if __name__ == "__main__":
     
     # S'assurer que le robot est à l'arrêt avant de commencer
     dxl_io.set_moving_speed({1: 0, 2: 0})  
-    time.sleep(1)
 
     # x = 0.5m, y = 0.0m, angle final = 0°
-    go_to_xya(0.5, 0.0, 0.0, dt)
+    go_to_xya(0.5, 0.0, math.radians(180), dt)
     
     time.sleep(2) # Pause de 2 secondes
     
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
-    go_to_xya(0.5, 0.5, math.radians(90), dt)
+    go_to_xya(0, 0, math.radians(0), dt)
 
-    time.sleep(2)
+    time.sleep(2000)
     # retour au départ
     go_to_xya(0.0, 0.0, math.radians(-135), dt)
 
