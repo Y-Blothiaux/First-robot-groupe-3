@@ -8,7 +8,7 @@ from moteurs import rotate_and_move, stop
 lower_blue = np.array([100, 110, 50])
 upper_blue = np.array([135, 255, 255])
 lower_green = np.array([65, 72, 57])
-upper_green = np.array([95, 255, 255])
+upper_green = np.array([98, 255, 255])
 lower_yellow = np.array([15, 40, 40])
 upper_yellow = np.array([45, 255, 255])
 lower_red1 = np.array([0, 40, 40])
@@ -26,8 +26,8 @@ attenteVert = 90
 compteurVert = 0
 
 # Premiere couleur du cycle (bleue)
-lower = lower_blue
-upper = upper_blue
+lower = lower_yellow
+upper = upper_yellow
 
 # Fonction de prediction
 # Prends une frame et renvoi un entier entre -100 (il faut tourner a gauche),
@@ -54,12 +54,14 @@ def prediction(img):
             largestContour = max(contours, key=cv2.contourArea)
             moment = cv2.moments(largestContour)
             if (moment["m00"] > 800):
+		
+                print(compteurVert)                
 
                 # On incremente le compteur de zone verte détecté d'affilé 
                 compteurVert+=1
 
                 # Si on a detecté X frame d'affilé contenant du vert, on change la couleur
-                if compteurVert>=5:
+                if compteurVert>=2:
 
                     # On initialise le delai avant redetectionn de vert possible a 6sec
                     attenteVert=180
@@ -72,12 +74,12 @@ def prediction(img):
                     # On regarde la nouvelle couleur par l'identifiant pour choisir la bonne couleur hsv
                     match numeroCouleur:
                         case 0:
-                            lower = lower_blue
-                            upper = upper_blue
-                            print("yellow")
-                        case 1:
                             lower = lower_yellow
                             upper = upper_yellow
+                            print("yellow")
+                        case 1:
+                            lower = lower_blue
+                            upper = upper_blue
                             print("bleue")
                         case 2:
                             # rouge géré plus bas
@@ -176,7 +178,7 @@ if __name__ == "__main__":
         direction = prediction(frame)
 
         # On appelle la fonction moteurs avec la prediction obtenu
-        rotate_and_move(direction)
+        rotate_and_move(direction, numeroCouleur)
 
         # Appuyer sur q pour quitter la boucle (a virer)
         if cv2.waitKey(1) & 0xFF == ord('q'):
