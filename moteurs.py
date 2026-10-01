@@ -24,10 +24,10 @@ def rotate_and_move(HorizontalOrientation, numeroCouleur):
         # jaune, on va vite
         case 0:
             # La vitesse diminue si le coefficient HorizontalOrientation est haut
-            baseSpeed = int(800 - (abs(HorizontalOrientation) * 0.5))
+            baseSpeed = int(800 - (abs(HorizontalOrientation) * 3))
         # bleue, vitesse moyenne
         case 1:
-            baseSpeed = int(600 - (abs(HorizontalOrientation) * 0.5))
+            baseSpeed = int(600 - (abs(HorizontalOrientation) * 3))
         # rouge, on ralenti beaucoup
         case 2:
             baseSpeed = int(350 - (abs(HorizontalOrientation) * 4))
@@ -42,7 +42,7 @@ def rotate_and_move(HorizontalOrientation, numeroCouleur):
     s_right = baseSpeed + (HorizontalOrientation * coef)
 
     # On filtre la vitesse pour qu'elle reste dans des limites acceptables par sécurité
-    maxSpeed = 500
+    maxSpeed = 800
     s_left = int(max(-maxSpeed, min(maxSpeed, s_left)))
     s_right = int(max(-maxSpeed, min(maxSpeed, s_right)))
 
