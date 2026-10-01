@@ -2,19 +2,6 @@ import math
 import pypot.dynamixel
 import time
 
-R = 0.025  # Rayon de la roue = 2.5 cm
-L = 0.15  # Distance entre les roues = 15 cm
-
-# Variables de position du robot dans le monde
-# Modifiées à chaque cycle de 20ms
-x_inUse = 0.0
-y_inUse = 0.0
-theta_inUse = 0.0
-
-# Config des vitesses
-SpeedLinear = 2.0
-SpeedAngularLinear = 3.0
-SpeedAngular = 2.0
 
 
 
