@@ -2,71 +2,100 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-#from moteurs import rotate_and_move, stop
+from moteurs import rotate_and_move, stop
 
-
-# BLEU
+# Declaration HSV des couleurs
 lower_blue = np.array([100, 110, 50])
 upper_blue = np.array([135, 255, 255])
-
-# VERT
 lower_green = np.array([65, 72, 57])
-upper_green = np.array([101, 255, 255])
-
-# JAUNE
+upper_green = np.array([95, 255, 255])
 lower_yellow = np.array([15, 40, 40])
 upper_yellow = np.array([45, 255, 255])
-
-# ROUGE (Le rouge est coupé en deux sur l'échelle OpenCV)
 lower_red1 = np.array([0, 40, 40])
 upper_red1 = np.array([10, 255, 255])
 lower_red2 = np.array([160, 40, 40])
 upper_red2 = np.array([179, 255, 255])
 
+# Identifiant de la couleur actuelle
 numeroCouleur = 0
-attente = 0
 
-lower = lower_green
-upper = upper_green
+# Delai d'attente en frame avant de pouvoir detecter le vert, 3 seconde par defaut (30fps)
+attenteVert = 90
 
+# Nombre de frame d'affilé sur lequel on a capté du vert
+compteurVert = 0
+
+# Premiere couleur du cycle (bleue)
+lower = lower_blue
+upper = upper_blue
+
+# Fonction de prediction
+# Prends une frame et renvoi un entier entre -100 (il faut tourner a gauche),
+# 0 (tout droit) et 100 (droite) (gauche droite peut etre inversé)
 def prediction(img):
-    global numeroCouleur, lower, upper, attente
+    # On recupere les variables globales pour cette fonction
+    global numeroCouleur, lower, upper, attenteVert, compteurVert
 
     # On passe l'image du champ rgb vers hsv pour detecter les couleurs plus facilement
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    attente-=1
+    # On met a jour l'attente du vert pour cette frame
+    attenteVert-=1
 
-    # Recherche de zone verte
-    mask = cv2.inRange(hsv_img, lower_green, upper_green)
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # On verifie que la duree d'attente avant redection possible est terminé
+    if attenteVert<=0:
+        # Recherche de zone verte (masquage et contour)
+        mask = cv2.inRange(hsv_img, lower_green, upper_green)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    attente = 1 
-    if contours and attente<=0:
-        largestContour = max(contours, key=cv2.contourArea)
-        moment = cv2.moments(largestContour)
-        if (moment["m00"] > 300):
-            attente=180
-            numeroCouleur=(numeroCouleur+1)%3
-            match numeroCouleur:
-                case 0:
-                    lower = lower_yellow
-                    upper = upper_yellow
-                    print("yellow")
-                case 1:
-                    lower = lower_blue
-                    upper = upper_blue
-                    print("bleue")
-                case 2:
-                    lower = lower_red1
-                    upper = upper_red1
-                    print("rouge")
-            print(lower)
+        # On verifie qu'on a capté un contour d'un objet vert 
+        if contours:
+
+            largestContour = max(contours, key=cv2.contourArea)
+            moment = cv2.moments(largestContour)
+            if (moment["m00"] > 800):
+
+                # On incremente le compteur de zone verte détecté d'affilé 
+                compteurVert+=1
+
+                # Si on a detecté X frame d'affilé contenant du vert, on change la couleur
+                if compteurVert>=5:
+
+                    # On initialise le delai avant redetectionn de vert possible a 6sec
+                    attenteVert=180
+
+                    compteurVert = 0
+
+                    # On incremente l'identifiant de couleur actuelle de 1 avec modulo pour cycle
+                    numeroCouleur=(numeroCouleur+1)%3
+
+                    # On regarde la nouvelle couleur par l'identifiant pour choisir la bonne couleur hsv
+                    match numeroCouleur:
+                        case 0:
+                            lower = lower_blue
+                            upper = upper_blue
+                            print("yellow")
+                        case 1:
+                            lower = lower_yellow
+                            upper = upper_yellow
+                            print("bleue")
+                        case 2:
+                            # rouge géré plus bas
+                            print("rouge")
+                    print(lower)
+
+            else :
+                compteurVert=0
+        else :
+            # Si on pas detecté de zone verte d'affilé, on reset le compteur
+            compteurVert=0
+
 
     # Recherche de ligne coloré
 
     # On creer un masque de l'image par un filtre de couleur, en mettant en blanc 
     # les pixels de la range de couleur cherché (et les autres en noir)
+    # Le rouge est divisé en 2 alors on doit fusionner les 2 etallonages
     if numeroCouleur == 2:
         mask1 = cv2.inRange(hsv_img, lower_red1, upper_red1)
         mask2 = cv2.inRange(hsv_img, lower_red2, upper_red2)
@@ -108,20 +137,20 @@ def prediction(img):
             # On force la direction dans cet echelle
             direction = max(-100,min(100,direction))
 
-            cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
-            cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
+            #cv2.putText(img, str(direction), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2, cv2.LINE_AA)
+            #cv2.imshow("prediciton debug", cv2.drawContours(img, largestContour, -1, (0, 255, 0), 3))
 
             return direction
 
     # Si aucune ligne n'est trouvé, on va tout droit
-    cv2.imshow("prediciton debug", img)
+    #cv2.imshow("prediciton debug", img)
     return 0
 
 
 if __name__ == "__main__":
 
-    # On choisit la camera (1 si pc portable, 0 sinon)
-    cap = cv2.VideoCapture(1)
+    # On choisit la camera (1 si pc portable avec webcam intégré, 0 si rasb)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Error: Could not open webcam.")
         exit()
@@ -146,7 +175,8 @@ if __name__ == "__main__":
         # On recupere une predication de la direction a prendre
         direction = prediction(frame)
 
-        #rotate_and_move(direction)
+        # On appelle la fonction moteurs avec la prediction obtenu
+        rotate_and_move(direction)
 
         # Appuyer sur q pour quitter la boucle (a virer)
         if cv2.waitKey(1) & 0xFF == ord('q'):
