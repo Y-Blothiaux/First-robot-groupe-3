@@ -148,12 +148,12 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # x = 0.5m, y = 0.0m, angle final = 0°
-    go_to_xya(0.2, 0.0, 0.0, dt_inUse)
+    go_to_xya(0.5, 0.0, 0.0, dt_inUse)
     
     time.sleep(2) # Pause de 2 secondes
     
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
-    go_to_xya(0.2, 0., math.radians(90), dt_inUse)
+    go_to_xya(0.5, 0.5, math.radians(90), dt_inUse)
 
     # x = 0.0m, y = 0.0m, angle final = 180°
     go_to_xya(0.0, 0.0, math.radians(180), dt_inUse)
