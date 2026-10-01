@@ -4,18 +4,18 @@ import time
 
 
 R = 0.025  # rayon de la roue = 2.5 cm
-L = 0.146  # distance entre les roues = 14.6 cm
+L = 0.148  # distance entre les roues = 14.6 cm
 
 
 # Variables de position du robot dans le monde
 # Modifiées à chaque cycle de 20ms
-x_inUse = 0.0
-y_inUse = 0.0
-theta_inUse = 0.0
+x = 0.0
+y = 0.0
+theta = 0.0
 
-x_dot_inUse = 0.0
-theta_dot_inUse = 0.0
-dt_inUse= 0.02
+x_dot = 0.0
+theta_dot = 0.0
+dt= 0.02
 
 #initialisation
 ports = pypot.dynamixel.get_available_ports()
@@ -79,7 +79,7 @@ def normalise_angle(angle):
 
 
 def go_to_xya(target_x,target_y,target_theta,dt):
-    global x_inUse,y_inUse,theta_inUse
+    global x,y,theta
     target_diff_dist_max = 0.03  # 3 cm
     target_diff_angle_max = 0.03
     tolerated_cap_steps = 0.05   # Tolérance de cap pour autoriser l'avancement (rad, env. 5°)
@@ -91,22 +91,22 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         # L'inversion de signe sur la roue droite (-speeds[1]) est nécessaire car 
         # les deux moteurs sont physiquement montés en miroir sur le châssis
         speeds = dxl_io.get_present_speed([1, 2])
-        v_left_inUse = speeds[0]
-        v_right_inUse = -speeds[1]
+        v_left = speeds[0]
+        v_right = -speeds[1]
         
-        x_dot_inUse,theta_dot_inUse=direct_kinematics(v_left_inUse,v_right_inUse)
+        x_dot,theta_dot=direct_kinematics(v_left,v_right)
         #on actualise la position
-        x_inUse, y_inUse, theta_inUse = tick_odom(x_inUse, y_inUse, theta_inUse, x_dot_inUse, theta_dot_inUse, dt)
+        x, y, theta = tick_odom(x, y, theta, x_dot, theta_dot, dt)
         # Distance restante avec pythagore
-        dx = target_x - x_inUse
-        dy = target_y - y_inUse
+        dx = target_x - x
+        dy = target_y - y
         distance_togo = math.sqrt(dx**2 + dy**2)
 
         if distance_togo > target_diff_dist_max:
             # Le robot est trop loin du point d'arrivée.
             # On calcule la ligne droite (angle_to_point) reliant le robot à sa cible.
             angle_to_point = math.atan2(dy, dx)
-            error_cap = normalise_angle(angle_to_point - theta_inUse)
+            error_cap = normalise_angle(angle_to_point - theta)
             # Logique de navigation (Machine à états) : 
             # On priorise la rotation. Si le robot n'est pas bien aligné
             # avec la cible (erreur > tolérance), il pivote sur place.
@@ -126,7 +126,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         else:
            # Le robot a atteint les coordonnées (x, y). 
            # Il effectue maintenant sa rotation finale sur place pour atteindre target_theta.
-            error_angle_final = normalise_angle(target_theta - theta_inUse)
+            error_angle_final = normalise_angle(target_theta - theta)
             
             if abs(error_angle_final) > target_diff_angle_max:
                 # On tourne sur place pour corriger l'angle final
@@ -157,16 +157,16 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # x = 0.5m, y = 0.0m, angle final = 0°
-    go_to_xya(0.5, 0.0, 0.0, dt_inUse)
+    go_to_xya(0.5, 0.0, 0.0, dt)
     
     time.sleep(2) # Pause de 2 secondes
     
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
-    go_to_xya(0.5, 0.5, math.radians(90), dt_inUse)
+    go_to_xya(0.5, 0.5, math.radians(90), dt)
 
     time.sleep(2)
     # retour au départ
-    go_to_xya(0.0, 0.0, math.radians(-135), dt_inUse)
+    go_to_xya(0.0, 0.0, math.radians(-135), dt)
 
     # Arrêt de sécurité
     dxl_io.set_moving_speed({1: 0, 2: 0})

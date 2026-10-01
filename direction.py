@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import time
 
 from moteurs import rotate_and_move, stop
 
@@ -69,7 +70,7 @@ def prediction(img):
                     compteurVert = 0
 
                     # On incremente l'identifiant de couleur actuelle de 1 avec modulo pour cycle
-                    numeroCouleur=(numeroCouleur+1)%3
+                    numeroCouleur=numeroCouleur+1
 
                     # On regarde la nouvelle couleur par l'identifiant pour choisir la bonne couleur hsv
                     match numeroCouleur:
@@ -84,6 +85,10 @@ def prediction(img):
                         case 2:
                             # rouge géré plus bas
                             print("rouge")
+                        case 3:
+                            sleep(1)
+                            stop()
+                            return 
                     print(lower)
 
             else :
