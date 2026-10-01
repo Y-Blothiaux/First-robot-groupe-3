@@ -86,9 +86,10 @@ def prediction(img):
                             # rouge géré plus bas
                             print("rouge")
                         case 3:
-                            sleep(1)
+                            rotate_and_move(0,1)
+                            time.sleep(1)
                             stop()
-                            return 
+                            return 0
                     print(lower)
 
             else :
