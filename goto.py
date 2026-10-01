@@ -117,15 +117,18 @@ def go_to_xya(target_x,target_y,target_theta,dt):
             tolerance_actuelle = tolerated_cap_steps
             if distance_togo < 0.15:
                 tolerance_actuelle=0.25
-            vitesse_avance = max(0.05,min(vitesse_marche,2*distance_togo))
-            if abs(error_cap) > tolerance_actuelle:
-                # Alignement avec la cible
+            vitesse_avance = max(0.05, min(vitesse_marche, 2.0 * distance_togo))
+            
+            # Si le robot regarde complètement dans la mauvaise direction (> 23 degrés)
+            if abs(error_cap) > 0.4: 
+                # On pivote sur place pour se dégrossir
                 x_dot_target = 0.0
-                theta_dot_target = max(-speed_rotation,min(speed_rotation, 2* error_cap))
+                theta_dot_target = max(-speed_rotation, min(speed_rotation, 2.5 * error_cap))
             else:
-                # S'il est bien aligné, alors et seulement alors, il avance en ligne droite.
+                # S'il regarde "à peu près" dans la bonne direction, on avance 
+                # TOUT EN corrigeant le cap dynamiquement (virage fluide)
                 x_dot_target = vitesse_avance
-                theta_dot_target = 0.0
+                theta_dot_target = max(-speed_rotation, min(speed_rotation, 2.5 * error_cap))
                 
         else:
            # Le robot a atteint les coordonnées (x, y). 
