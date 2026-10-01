@@ -4,7 +4,7 @@ import time
 
 
 R = 0.025  # rayon de la roue = 2.5 cm
-L = 0.148  # distance entre les roues = 14.6 cm
+L = 0.144  # distance entre les roues = 14.8 cm
 
 
 # Variables de position du robot dans le monde
@@ -86,7 +86,11 @@ def go_to_xya(target_x,target_y,target_theta,dt):
 
     vitesse_marche = 0.15
     speed_rotation = 3.0
+    last_time = time.time()
     while True:
+        current_time = time.time()
+        real_dt = current_time - last_time
+        last_time = current_time
         # On lit la vitesse réelle des moteurs (boucle fermée).
         # L'inversion de signe sur la roue droite (-speeds[1]) est nécessaire car 
         # les deux moteurs sont physiquement montés en miroir sur le châssis
@@ -96,7 +100,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         
         x_dot,theta_dot=direct_kinematics(v_left,v_right)
         #on actualise la position
-        x, y, theta = tick_odom(x, y, theta, x_dot, theta_dot, dt)
+        x, y, theta = tick_odom(x, y, theta, x_dot, theta_dot, real_dt)
         # Distance restante avec pythagore
         dx = target_x - x
         dy = target_y - y
