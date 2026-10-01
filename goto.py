@@ -14,13 +14,8 @@ y_inUse = 0.0
 theta_inUse = 0.0
 
 x_dot_inUse = 0.0
-y__dot_inUse = 0.0
 theta_dot_inUse = 0.0
 dt_inUse= 0.02
-# Config des vitesses 
-speedLinear = 2.0
-speedAngularLinear = 3.0
-speedAngular = 2.0
 
 #initialisation
 ports = pypot.dynamixel.get_available_ports()
