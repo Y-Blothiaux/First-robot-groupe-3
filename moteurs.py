@@ -21,29 +21,28 @@ dxl_io.set_wheel_mode([1, 2])
 def rotate_and_move(HorizontalOrientation, numeroCouleur):
 
     match numeroCouleur:
-        # jaune, on trace
+        # jaune, on va vite
         case 0:
             # La vitesse diminue si le coefficient HorizontalOrientation est haut
-            baseSpeed = int(400 - (abs(HorizontalOrientation) * 0.5))
+            baseSpeed = int(800 - (abs(HorizontalOrientation) * 0.5))
         # bleue, vitesse moyenne
         case 1:
-            baseSpeed = int(300 - (abs(HorizontalOrientation) * 1))
+            baseSpeed = int(600 - (abs(HorizontalOrientation) * 0.5))
         # rouge, on ralenti beaucoup
         case 2:
-            baseSpeed = int(200 - (abs(HorizontalOrientation) * 2))
+            baseSpeed = int(350 - (abs(HorizontalOrientation) * 4))
 
     # Sécurité pour empêcher une vitesse de base négative
-    baseSpeed = max(50,baseSpeed)
+    #baseSpeed = max(50,baseSpeed)
 
     # Amplifie l'impacte de HorizontalOrientation dans la rotation des roues
-    coef = 5
-
+    coef = 2.9
     # Calcul individuel pour chaque roue en fonction des donnée du capteur
     s_left = baseSpeed - (HorizontalOrientation * coef)
     s_right = baseSpeed + (HorizontalOrientation * coef)
 
     # On filtre la vitesse pour qu'elle reste dans des limites acceptables par sécurité
-    maxSpeed = 750
+    maxSpeed = 500
     s_left = int(max(-maxSpeed, min(maxSpeed, s_left)))
     s_right = int(max(-maxSpeed, min(maxSpeed, s_right)))
 
