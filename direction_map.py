@@ -6,7 +6,7 @@ from moteurs import rotate_and_move, stop
 from goto import dxl_io, direct_kinematics, tick_odom
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 
 x = 0.0
 y = 0.0
@@ -159,38 +159,40 @@ if __name__ == "__main__":
         print("Error: Could not open webcam.")
         exit()
 
-    fig, ax = plt.subplots(figsize=(8, 8))
+    try:
+        # Boucle infini de capture de la camera
+        while True:
+            # On recupere une frame de la camera
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Can't receive frame.")
+                break
 
-    line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
-    robot, = ax.plot(x_list[-1:], y_list[-1:], 'ro', label="Robot")
+            frame = cv2.resize(frame, (360, 240))       # On force une resolution plus legere pour le traitement
+            frame = frame[100:360, :]                   # On coupe pour garder le bas de l'image
+            direction = prediction(frame)               # On recupere une predication de la direction a prendre
+            rotate_and_move(direction, numeroCouleur)
+            odometry()
 
-    ax.set_title("Cartographie par Odométrie Temps Réel")
-    ax.set_xlabel("X (cm)")
-    ax.set_ylabel("Y (cm)")
-    ax.grid(True)
-    ax.legend()
-    ax.axis('equal') # Échelle 1:1 pour ne pas déformer la trajectoire
+            # Appuyer sur q pour quitter la boucle (a virer)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                plt.show()
+                stop()
+                break
+    finally:
+        stop()
+        cap.release()
+        cv2.destroyAllWindows()
 
-    # Boucle infini de capture de la camera
-    while True:
-        # On recupere une frame de la camera
-        ret, frame = cap.read()
-        if not ret:
-            print("Error: Can't receive frame.")
-            break
+        fig, ax = plt.subplots(figsize=(8, 8))
+        line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
+        robot, = ax.plot(x_list[-1:], y_list[-1:], 'ro', label="Robot")
+        ax.set_title("Cartographie par Odométrie Temps Réel")
+        ax.set_xlabel("X (cm)")
+        ax.set_ylabel("Y (cm)")
+        ax.grid(True)
+        ax.legend()
+        ax.axis('equal') # Échelle 1:1 pour ne pas déformer la trajectoire
 
-        frame = cv2.resize(frame, (360, 240))       # On force une resolution plus legere pour le traitement
-        frame = frame[100:360, :]                   # On coupe pour garder le bas de l'image
-        direction = prediction(frame)               # On recupere une predication de la direction a prendre
-        rotate_and_move(direction, numeroCouleur)
-        odometry()
-
-        # Appuyer sur q pour quitter la boucle (a virer)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            plt.show()
-            stop()
-            break
-
-    # Release the capture and close windows
-    cap.release()
-    cv2.destroyAllWindows()
+        plt.savefig("trajectoire_parcours.png")
+        print("Graphique sauvegardé sous 'trajectoire_parcours.png'.")
