@@ -53,19 +53,19 @@ def odometry(period=0.02):
 
             plot_update_counter += 1
             if plot_update_counter % 5:
-                 line.set_data(x_list, y_list)
-                 robot.set_data(x_list[-1:], y_list[-1:])
-                 ax.relim()
-                 ax.autoscale_view()
-                 plt.pause(0.001) # Pause nécessaire à la MAJ
+                line.set_data(x_list, y_list)
+                robot.set_data(x_list[-1:], y_list[-1:])
+                ax.relim()
+                ax.autoscale_view()
+                plt.pause(0.001) # Pause nécessaire à la MAJ
 
             time.sleep(period)
     except KeyboardInterrupt:
-            print(f"\nPosition finale -> X: {x_cm:.1f} cm | Y: {y_cm:.1f} cm | Cap: {math.degrees(theta):.1f}°")
-            print("\nArrêt du suivi odométrique.")
+        print(f"\nPosition finale -> X: {x_cm:.1f} cm | Y: {y_cm:.1f} cm | Cap: {math.degrees(theta):.1f}°")
+        print("\nArrêt du suivi odométrique.")
 
-            plt.ioff()
-            plt.show()
+        plt.ioff()
+        plt.show()
 
 if __name__ == "__main__":
     odometry()
