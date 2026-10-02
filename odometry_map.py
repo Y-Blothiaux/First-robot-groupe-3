@@ -2,8 +2,11 @@ import math
 import time
 from goto import dxl_io, direct_kinematics, tick_odom
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 def odometry(period=0.02):
+    plt.ion() # Graph en temps réel
     fig, ax = plt.subplots(figsize=(8, 8))
 
     x_list = []
@@ -51,7 +54,7 @@ def odometry(period=0.02):
             print(f"\rX: {x_cm:7.1f} cm | Y: {y_cm:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
 
             plot_update_counter += 1
-            if plot_update_counter % 5:
+            if plot_update_counter % 20:
                 line.set_data(x_list, y_list)
                 robot.set_data(x_list[-1:], y_list[-1:])
                 ax.relim()
@@ -63,16 +66,8 @@ def odometry(period=0.02):
         print(f"\nPosition finale -> X: {x_cm:.1f} cm | Y: {y_cm:.1f} cm | Cap: {math.degrees(theta):.1f}°")
         print("\nArrêt du suivi odométrique.")
 
+        plt.ioff()
         plt.show()
 
 if __name__ == "__main__":
     odometry()
-
-
-
-
-
-
-
-
-
