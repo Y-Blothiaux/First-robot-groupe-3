@@ -165,14 +165,14 @@ if __name__ == "__main__":
     # x = 0.5m, y = 0.0m, angle final = 0°
     go_to_xya(0.5, 0.0, math.radians(180), dt)
     
-    time.sleep(2) # Pause de 2 secondes
+    time.sleep(1) # Pause de 2 secondes
     
     # x = 0.5m, y = 0.5m, angle final = 90° (converti en radians)
-    go_to_xya(0, 0, math.radians(0), dt)
+    go_to_xya(0.5, 0.5, math.radians(90), dt)
 
-    time.sleep(2000)
+    time.sleep(1)
     # retour au départ
-    go_to_xya(0.0, 0.0, math.radians(-135), dt)
+    go_to_xya(0.0, 0.0, math.radians(0), dt)
 
     # Arrêt de sécurité
     dxl_io.set_moving_speed({1: 0, 2: 0})

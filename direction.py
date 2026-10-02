@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cv2
 import time
 
+from beep import melodie_victoire, bip_changement_couleur
 from moteurs import rotate_and_move, stop
 
 # Declaration HSV des couleurs
@@ -82,13 +83,16 @@ def prediction(img):
                             lower = lower_blue
                             upper = upper_blue
                             print("bleue")
+                            bip_changement_couleur(1)
                         case 2:
                             # rouge géré plus bas
                             print("rouge")
+                            bip_changement_couleur(2)
                         case 3:
                             rotate_and_move(0,1)
                             time.sleep(0.25)
                             stop()
+                            melodie_victoire()
                             exit()
                     print(lower)
 

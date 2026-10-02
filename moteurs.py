@@ -31,7 +31,7 @@ def rotate_and_move(HorizontalOrientation, numeroCouleur):
             baseSpeed = int(790 - (abs(HorizontalOrientation) * 4))
         # rouge, on ralenti beaucoup
         case 2:
-            baseSpeed = int(520 - (abs(HorizontalOrientation) * 4))
+            baseSpeed = int(450 - (abs(HorizontalOrientation) * 4))
 
     # Sécurité pour empêcher une vitesse de base négative
     #baseSpeed = max(50,baseSpeed)
