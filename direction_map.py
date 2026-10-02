@@ -15,9 +15,10 @@ x_list = []
 y_list = []
 plot_update_counter = 0 # Pour mettre à jour le plot de manière synchrone avec la boucle (toutes les 5 itérations)
 last = time.time()
+c_list = []
 
 def odometry(period=0.02):
-    global x, y, theta, x_list, y_list, plot_update_counter, last
+    global x, y, theta, x_list, y_list, plot_update_counter, last,numeroCouleur, c_list
     # dt réel mesuré
     now = time.time()
     dt = now - last
@@ -36,11 +37,16 @@ def odometry(period=0.02):
     x_list.append(x_cm)
     y_list.append(y_cm)
 
+    map_colors = {0: 'yellow', 1: 'blue', 2: 'red'}
+    c_list.append(map_colors.get(numeroCouleur, 'black'))
+
     print(f"\rX: {x_cm:7.1f} cm | Y: {y_cm:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
 
-    line.set_data(x_list, y_list)
+    traj.set_offsets(np.c_[x_list, y_list])
+    traj.set_facecolors(c_list)
+    traj.set_edgecolors(c_list)
     robot.set_data(x_list[-1:], y_list[-1:])
-    ax.relim()
+    ax.update_datalim(np.c_[x_list, y_list])
     ax.autoscale_view()
     plt.pause(0.001) # Pause nécessaire à la MAJ
     return x, y, theta, x_list, y_list, plot_update_counter, last
@@ -158,7 +164,7 @@ if __name__ == "__main__":
         exit()
 
     fig, ax = plt.subplots(figsize=(8, 8))
-    line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
+    traj = ax.scatter([], [], label="Trajectoire")
     robot, = ax.plot(x_list[-1:], y_list[-1:], 'ro', label="Robot")
 
     try:
@@ -175,7 +181,7 @@ if __name__ == "__main__":
             direction = prediction(frame)               # On recupere une predication de la direction a prendre
             rotate_and_move(direction,2)
             frameCounter+=1
-            if frameCounter>=30:
+            if frameCounter>=20:
                 odometry()
                 frameCounter=0
 
