@@ -89,7 +89,7 @@ def prediction(img):
                             rotate_and_move(0,1)
                             time.sleep(1)
                             stop()
-                            return 0
+                            exit()
                     print(lower)
 
             else :
