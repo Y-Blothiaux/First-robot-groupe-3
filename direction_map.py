@@ -159,7 +159,6 @@ if __name__ == "__main__":
         print("Error: Could not open webcam.")
         exit()
 
-    plt.ion() # Graph en temps réel
     fig, ax = plt.subplots(figsize=(8, 8))
 
     line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
@@ -188,9 +187,8 @@ if __name__ == "__main__":
 
         # Appuyer sur q pour quitter la boucle (a virer)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            stop()
-            plt.ioff()
             plt.show()
+            stop()
             break
 
     # Release the capture and close windows
