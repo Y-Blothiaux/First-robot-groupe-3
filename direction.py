@@ -41,7 +41,7 @@ def prediction(img):
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # On met a jour l'attente du vert pour cette frame
-    attenteVert-=1
+    attenteVert-=1 #mettre a 1
 
     # On verifie que la duree d'attente avant redection possible est terminé
     if attenteVert<=0:
@@ -87,9 +87,9 @@ def prediction(img):
                             print("rouge")
                         case 3:
                             rotate_and_move(0,1)
-                            time.sleep(1)
+                            time.sleep(0.25)
                             stop()
-                            return 0
+                            exit()
                     print(lower)
 
             else :
