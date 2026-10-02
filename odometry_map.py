@@ -2,6 +2,8 @@ import math
 import time
 from goto import dxl_io, direct_kinematics, tick_odom
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 def odometry(period=0.02):
     plt.ion() # Graph en temps réel
