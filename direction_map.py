@@ -159,6 +159,10 @@ if __name__ == "__main__":
         print("Error: Could not open webcam.")
         exit()
 
+    fig, ax = plt.subplots(figsize=(8, 8))
+    line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
+    robot, = ax.plot(x_list[-1:], y_list[-1:], 'ro', label="Robot")
+
     try:
         # Boucle infini de capture de la camera
         while True:
@@ -184,9 +188,6 @@ if __name__ == "__main__":
         cap.release()
         cv2.destroyAllWindows()
 
-        fig, ax = plt.subplots(figsize=(8, 8))
-        line, = ax.plot(x_list, y_list, 'b-', label="Trajectoire")
-        robot, = ax.plot(x_list[-1:], y_list[-1:], 'ro', label="Robot")
         ax.set_title("Cartographie par Odométrie Temps Réel")
         ax.set_xlabel("X (cm)")
         ax.set_ylabel("Y (cm)")
