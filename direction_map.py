@@ -38,13 +38,11 @@ def odometry(period=0.02):
 
     print(f"\rX: {x_cm:7.1f} cm | Y: {y_cm:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
 
-    plot_update_counter += 1
-    if plot_update_counter % 20:
-        line.set_data(x_list, y_list)
-        robot.set_data(x_list[-1:], y_list[-1:])
-        ax.relim()
-        ax.autoscale_view()
-        plt.pause(0.001) # Pause nécessaire à la MAJ
+    line.set_data(x_list, y_list)
+    robot.set_data(x_list[-1:], y_list[-1:])
+    ax.relim()
+    ax.autoscale_view()
+    plt.pause(0.001) # Pause nécessaire à la MAJ
     return x, y, theta, x_list, y_list, plot_update_counter, last
 
 # Declaration HSV des couleurs
@@ -103,9 +101,9 @@ def prediction(img):
                             print("rouge")
                         case 3:
                             rotate_and_move(0,1)
-                            time.sleep(1)
+                            time.sleep(0.25)
                             stop()
-                            return 0
+                            exit()
                     print(lower)
             else :
                 compteurVert=0
@@ -152,7 +150,7 @@ def prediction(img):
 
 
 if __name__ == "__main__":
-
+    frameCounter=0
     # Choix de la camera (1 si pc portable avec webcam intégré, 0 si rasb)
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -175,8 +173,11 @@ if __name__ == "__main__":
             frame = cv2.resize(frame, (360, 240))       # On force une resolution plus legere pour le traitement
             frame = frame[100:360, :]                   # On coupe pour garder le bas de l'image
             direction = prediction(frame)               # On recupere une predication de la direction a prendre
-            rotate_and_move(direction, numeroCouleur)
-            odometry()
+            rotate_and_move(direction,2)
+            frameCounter+=1
+            if frameCounter>=30:
+                odometry()
+                frameCounter=0
 
             # Appuyer sur q pour quitter la boucle (a virer)
             if cv2.waitKey(1) & 0xFF == ord('q'):
