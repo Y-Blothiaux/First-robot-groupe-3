@@ -7,12 +7,13 @@ from goto import dxl_io, direct_kinematics, tick_odom
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('TkAgg')
+from collections import deque
 
 x = 0.0
 y = 0.0
 theta = 0.0
-x_list = []
-y_list = []
+x_list = deque(maxlen=500)
+y_list = deque(deque(maxlen=500))
 plot_update_counter = 0 # Pour mettre à jour le plot de manière synchrone avec la boucle (toutes les 5 itérations)
 last = time.time()
 
@@ -39,15 +40,12 @@ def odometry(period=0.02):
     print(f"\rX: {x_cm:7.1f} cm | Y: {y_cm:7.1f} cm | Cap: {math.degrees(theta):7.1f}°", end="")
 
     plot_update_counter += 1
-    if plot_update_counter % 20:
+    if plot_update_counter % 10:
         line.set_data(x_list, y_list)
         robot.set_data(x_list[-1:], y_list[-1:])
         ax.relim()
         ax.autoscale_view()
         plt.pause(0.001) # Pause nécessaire à la MAJ
-
-    time.sleep(period)
-
     return x, y, theta, x_list, y_list, plot_update_counter, last
 
 # Declaration HSV des couleurs
