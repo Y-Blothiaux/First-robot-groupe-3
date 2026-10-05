@@ -91,7 +91,7 @@ def go_to_xya(target_x,target_y,target_theta,dt):
         current_time = time.time()
         real_dt = current_time - last_time
         last_time = current_time
-        # On lit la vitesse réelle des moteurs (boucle fermée).
+        # On lit la vitesse réelle des moteurs (boucle fermée)
         # L'inversion de signe sur la roue droite (-speeds[1]) est nécessaire car 
         # les deux moteurs sont physiquement montés en miroir sur le châssis
         speeds = dxl_io.get_present_speed([1, 2])
